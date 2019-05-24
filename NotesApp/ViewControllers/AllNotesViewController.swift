@@ -25,31 +25,30 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        results()
+        showResults()
     }
     
     @IBAction func sortAction(_ sender: Any) {
-        
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let descendingAlertAction = UIAlertAction(title: "From old to new ", style: .default) {[weak self] (action) in
             self?.sortNotes(plus: .down)
             self?.tableView.reloadData()
         }
+        
         let ascendingAlertAction = UIAlertAction(title: "From new to old", style: .default) {[weak self] (action) in
             self?.sortNotes(plus: .up)
             self?.tableView.reloadData()
         }
+        
         let cancelAlertAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(descendingAlertAction)
         alertController.addAction(ascendingAlertAction)
         alertController.addAction(cancelAlertAction)
         present(alertController, animated: true, completion: nil)
-        
     }
-
+    
     // MARK: - UITableViewDataSource
-
+    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
@@ -66,14 +65,13 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
         if isSearching {
             return filterAllNotes?.count ?? 0
         } else {
             return allNotes?.count ?? 0
         }
-}
-
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NoteCell", for: indexPath) as! NoteTableViewCell
         let note : NoteDetails?
@@ -108,7 +106,7 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     
     //MARK: - Private functions
     
-    private func results() {
+    private func showResults() {
         let fetchRequest: NSFetchRequest<NoteDetails> = NoteDetails.fetchRequest()
         
         do {
@@ -131,7 +129,7 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
         
         tableView.reloadData()
     }
-
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filterAllNotes = allNotes?.filter{($0.text?.lowercased().contains(searchText.lowercased()))!}
         isSearching = true
