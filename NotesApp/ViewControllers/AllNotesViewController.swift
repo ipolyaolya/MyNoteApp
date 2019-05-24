@@ -15,7 +15,7 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     @IBOutlet weak var searchBar: UISearchBar!
     
     var allNotes: [NoteDetails]?
-    var filterAllNotes: [NoteDetails]?
+    var filteredNotes: [NoteDetails]?
     var isSearching = false
     
     enum SortDetails {
@@ -25,7 +25,16 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        showResults()
+        showResults { [weak self] notes in
+            self?.allNotes = notes
+            if let searchText = self?.searchBar.text, !searchText.isEmpty {
+                self?.filteredNotes = notes.filter { ($0.text?.lowercased().contains(searchText.lowercased()))! }
+            } else {
+                self?.filteredNotes = notes
+            }
+           
+            self?.tableView.reloadData()
+        }
     }
     
     @IBAction func sortAction(_ sender: Any) {
@@ -54,33 +63,29 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete, let note = allNotes?[indexPath.row] {
+        if editingStyle == .delete, let note = filteredNotes?[indexPath.row] {
             DatabaseController.getContext().delete(note)
-            allNotes?.remove(at: indexPath.row)
+            filteredNotes?.remove(at: indexPath.row)
             tableView.beginUpdates()
             tableView.deleteRows(at: [indexPath], with: .bottom)
             tableView.endUpdates()
             DatabaseController.saveContext()
+            
+            showResults { [weak self] notes in
+                self?.allNotes = notes
+            }
         }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isSearching {
-            return filterAllNotes?.count ?? 0
-        } else {
-            return allNotes?.count ?? 0
-        }
+        return filteredNotes?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NoteCell", for: indexPath) as! NoteTableViewCell
-        let note : NoteDetails?
+        let note: NoteDetails?
         
-        if isSearching {
-            note = filterAllNotes?[indexPath.row]
-        } else {
-            note = allNotes?[indexPath.row]
-        }
+        note = filteredNotes?[indexPath.row]
         
         cell.configureWith(text: note?.text?.limitLenght(to: 100), date: note?.date)
         return cell
@@ -95,24 +100,19 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "NoteEditViewController") as! NoteDetailsViewController
-        if isSearching {
-            controller.note = filterAllNotes?[indexPath.row]
-        } else {
-            controller.note = allNotes?[indexPath.row]
-        }
-        
+        controller.note = filteredNotes?[indexPath.row]
+    
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
     //MARK: - Private functions
     
-    private func showResults() {
+    private func showResults(completion: (([NoteDetails]) -> Void)?) {
         let fetchRequest: NSFetchRequest<NoteDetails> = NoteDetails.fetchRequest()
         
         do {
             let searchResults = try DatabaseController.getContext().fetch(fetchRequest) as [NoteDetails]
-            allNotes = searchResults
-            tableView.reloadData()
+            completion?(searchResults)
         }
         catch {
             print("Error: \(error)")
@@ -122,27 +122,26 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     private func sortNotes(plus details: SortDetails) {
         switch details {
         case .up:
-            allNotes?.sort { $0.date?.compare($1.date! as Date) == .orderedAscending }
+            filteredNotes?.sort { $0.date?.compare($1.date! as Date) == .orderedAscending }
         case .down:
-            allNotes?.sort { $0.date?.compare($1.date! as Date) == .orderedDescending }
+            filteredNotes?.sort { $0.date?.compare($1.date! as Date) == .orderedDescending }
         }
         
         tableView.reloadData()
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        filterAllNotes = allNotes?.filter{($0.text?.lowercased().contains(searchText.lowercased()))!}
-        isSearching = true
+        filteredNotes = allNotes?.filter{($0.text?.lowercased().contains(searchText.lowercased()))!}
         tableView.reloadData()
         if searchBar.text == "" {
-            isSearching = false
+            filteredNotes = allNotes
             tableView.reloadData()
         }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        isSearching = false
         searchBar.text = ""
+        filteredNotes = allNotes
         tableView.reloadData()
     }
 }
