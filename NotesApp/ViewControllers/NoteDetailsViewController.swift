@@ -13,18 +13,21 @@ class NoteDetailsViewController: UIViewController {
     
     @IBOutlet private weak var noteTextView: UITextView!
     @IBOutlet private weak var saveBarButton: UIBarButtonItem!
+    @IBOutlet private weak var shareBarButton: UIBarButtonItem!
     
     var note: NoteDetails?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
     }
     
     //MARK: - Buttons
-
+    
     @IBAction func saveButton(_ sender: UIBarButtonItem) {
-        if noteTextView.text.count >= 1 {
+        
+        if noteTextView.text.count >= 1{
             addNote(note)
         } else {
             print("Мне мало мало мало")
@@ -32,6 +35,7 @@ class NoteDetailsViewController: UIViewController {
     }
     
     @IBAction func shareButton(_ sender: Any) {
+        
         guard let noteShare = note else { return }
         let itemsToShare = [noteShare.text]
         let activityViewController = UIActivityViewController(activityItems: itemsToShare as [Any], applicationActivities: nil)
@@ -41,18 +45,20 @@ class NoteDetailsViewController: UIViewController {
     //MARK: - Private functions
     
     private func setupUI() {
+        
         if note?.text != nil {
-            saveBarButton.title = ""
             noteTextView.text = note?.text
             noteTextView.becomeFirstResponder()
             
         } else {
+            shareBarButton.title = ""
             saveBarButton.title = "Save"
             noteTextView.text = note?.text
         }
     }
     
     private func addNote(_ note: NoteDetails?) {
+
         if let note = note {
             saveNote(note)
         } else {
@@ -71,7 +77,7 @@ class NoteDetailsViewController: UIViewController {
     }
 }
 
-//MARK: - Extension
+    //MARK: - Extension
 
 extension NoteDetailsViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {

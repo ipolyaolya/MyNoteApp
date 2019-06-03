@@ -11,7 +11,6 @@ import CoreData
 
 class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     
-    @IBOutlet weak var sortButton: UIBarButtonItem!
     @IBOutlet weak var searchBar: UISearchBar!
     
     var allNotes: [NoteDetails]?
@@ -19,12 +18,13 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     var isSearching = false
     
     enum SortDetails {
-        case up
-        case down
+        case descending
+        case ascending
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         showResults { [weak self] notes in
             self?.allNotes = notes
             if let searchText = self?.searchBar.text, !searchText.isEmpty {
@@ -32,7 +32,7 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
             } else {
                 self?.filteredNotes = notes
             }
-           
+            
             self?.tableView.reloadData()
         }
     }
@@ -40,12 +40,12 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     @IBAction func sortAction(_ sender: Any) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let descendingAlertAction = UIAlertAction(title: "From old to new ", style: .default) {[weak self] (action) in
-            self?.sortNotes(plus: .down)
+            self?.sortNotes(plus: .descending)
             self?.tableView.reloadData()
         }
         
         let ascendingAlertAction = UIAlertAction(title: "From new to old", style: .default) {[weak self] (action) in
-            self?.sortNotes(plus: .up)
+            self?.sortNotes(plus: .ascending)
             self?.tableView.reloadData()
         }
         
@@ -101,7 +101,7 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "NoteEditViewController") as! NoteDetailsViewController
         controller.note = filteredNotes?[indexPath.row]
-    
+        
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -119,11 +119,11 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
         }
     }
     
-    private func sortNotes(plus details: SortDetails) {
+    func sortNotes(plus details: SortDetails) {
         switch details {
-        case .up:
+        case .ascending:
             filteredNotes?.sort { $0.date?.compare($1.date! as Date) == .orderedAscending }
-        case .down:
+        case .descending:
             filteredNotes?.sort { $0.date?.compare($1.date! as Date) == .orderedDescending }
         }
         
@@ -142,9 +142,15 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         filteredNotes = allNotes
+        searchBar.endEditing(true)
         tableView.reloadData()
     }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        filteredNotes = allNotes
+        searchBar.endEditing(true)
+        tableView.reloadData()
+    }
+
 }
-
-
 

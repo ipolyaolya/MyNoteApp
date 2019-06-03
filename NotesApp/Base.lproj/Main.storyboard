@@ -18,11 +18,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <searchBar key="tableHeaderView" contentMode="redraw" showsCancelButton="YES" id="E79-gC-3My">
+                        <searchBar key="tableHeaderView" contentMode="redraw" searchBarStyle="minimal" placeholder="Search Notes" showsCancelButton="YES" id="E79-gC-3My">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="56"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <textInputTraits key="textInputTraits"/>
+                            <textInputTraits key="textInputTraits" returnKeyType="done"/>
                             <scopeButtonTitles>
                                 <string>Title</string>
                                 <string>Title</string>
@@ -71,23 +71,24 @@
                             </tableViewCell>
                         </prototypes>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Notes" id="A94-Ic-fVV">
+                    <navigationItem key="navigationItem" title="Notes" id="aPN-4G-525">
                         <rightBarButtonItems>
-                            <barButtonItem systemItem="add" id="Xea-EC-ypn">
+                            <barButtonItem systemItem="add" id="Vg5-a8-8pE">
+                                <color key="tintColor" red="0.15802798160000001" green="0.15802798160000001" blue="0.15802798160000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
-                                    <segue destination="b0B-xu-NO2" kind="show" identifier="AddNote" id="eXk-9s-1Fz"/>
+                                    <segue destination="b0B-xu-NO2" kind="show" id="3hp-SD-c97"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Sort" id="c2d-zq-lWx">
+                            <barButtonItem title="Sort" id="xfr-OT-o2A">
+                                <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
-                                    <action selector="sortAction:" destination="eRZ-pg-6fK" id="rWA-Sb-Rvl"/>
+                                    <action selector="sortAction:" destination="eRZ-pg-6fK" id="Qcc-CN-965"/>
                                 </connections>
                             </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="searchBar" destination="E79-gC-3My" id="yht-tW-IPV"/>
-                        <outlet property="sortButton" destination="c2d-zq-lWx" id="ch1-77-V3T"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jnV-7x-f2S" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -123,12 +124,13 @@
                     </view>
                     <navigationItem key="navigationItem" id="xLv-n0-XVZ">
                         <rightBarButtonItems>
-                            <barButtonItem title="Save" id="TXH-Dn-aZ3">
+                            <barButtonItem title="Save" style="done" id="TXH-Dn-aZ3">
                                 <connections>
                                     <action selector="saveButton:" destination="b0B-xu-NO2" id="f4d-g9-Yhc"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem systemItem="action" id="2Wh-5b-y3O">
+                            <barButtonItem title="Share" id="2Wh-5b-y3O">
+                                <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
                                     <action selector="shareButton:" destination="b0B-xu-NO2" id="OVx-0g-Qxk"/>
                                 </connections>
@@ -138,6 +140,7 @@
                     <connections>
                         <outlet property="noteTextView" destination="kj0-FS-CEx" id="Hdl-nE-HIQ"/>
                         <outlet property="saveBarButton" destination="TXH-Dn-aZ3" id="0Ub-p8-sNz"/>
+                        <outlet property="shareBarButton" destination="2Wh-5b-y3O" id="Lvd-UA-Xt7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EDV-kd-ysy" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -163,4 +166,5 @@
             <point key="canvasLocation" x="138.40000000000001" y="-46.326836581709152"/>
         </scene>
     </scenes>
+    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
 </document>
