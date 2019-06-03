@@ -149,7 +149,6 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         filteredNotes = allNotes
         searchBar.endEditing(true)
-        tableView.reloadData()
     }
 
 }
