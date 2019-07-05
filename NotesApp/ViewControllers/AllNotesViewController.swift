@@ -39,12 +39,12 @@ class AllNotesViewController: UITableViewController, UISearchBarDelegate {
     
     @IBAction func sortAction(_ sender: Any) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let descendingAlertAction = UIAlertAction(title: "From old to new ", style: .default) {[weak self] (action) in
+        let descendingAlertAction = UIAlertAction(title: "From new to old", style: .default) {[weak self] (action) in
             self?.sortNotes(plus: .descending)
             self?.tableView.reloadData()
         }
         
-        let ascendingAlertAction = UIAlertAction(title: "From new to old", style: .default) {[weak self] (action) in
+        let ascendingAlertAction = UIAlertAction(title: "From old to new", style: .default) {[weak self] (action) in
             self?.sortNotes(plus: .ascending)
             self?.tableView.reloadData()
         }
